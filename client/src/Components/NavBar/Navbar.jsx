@@ -26,7 +26,7 @@ const Navbar = () => {
             setMenu("mens");
           }}
         >
-          <Link to="/men" style={{ textDecoration: "none" }}> Mens</Link>
+          <Link to="/mens" style={{ textDecoration: "none" }}> Mens</Link>
           {menu === "mens" ? <hr /> : <></>}
         </li>
         <li
