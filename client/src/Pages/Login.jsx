@@ -1,31 +1,70 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./CSS/Login.css";
+import { auth } from "../firebase";
+
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        console.log("Logged in with ", user.email);
+      })
+      .catch((error) => {
+        console.error("Error signing in:", error);
+        alert(error.message);
+      });
+  };
+
+  useEffect(() => {
+    // Set up an observer to check if the user is logged in
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      console.log("User state changed:", user);
+
+      if (user) {
+        // User is logged in, you can set an alert or perform other actions
+        alert("User is logged in!");
+      }
+    });
+
+    // Cleanup the observer when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="login">
       <div className="login-container">
         <h1>Login</h1>
         <div className="login-fields">
-          {/* <input type="text" placeholder="Your Name" /> */}
-          <input type="email" placeholder="Email Address" />
-          <input type="password" placeholder="Password" />
+          <input
+            type="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
-        <button>Continue</button>
+        <button onClick={handleLogin}>Continue</button>
 
-        {/* <div className="login-agree">
-          <input type="checkbox" name="" id="" />
-         
-        </div> */}
         <p className="login-login">
           Don't have an account?
           <Link to="/signup" style={{ textDecoration: "none" }}>
             <span> Sign up</span>
           </Link>
         </p>
-        {/* <Link to="/signup" style={{ textDecoration: "none",color:'red',fontWeight:'600' }}>
-            <span>Sign up </span>
-          </Link> */}
       </div>
     </div>
   );
