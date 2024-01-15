@@ -2,24 +2,24 @@ import React, { useState } from "react";
 import "./CSS/LoginSignup.css";
 import { Link } from "react-router-dom";
 import { auth } from "../firebase"; // Import the auth object from your firebase.js file
-
+import CustomModal from "../Components/Alert/Custommodal";
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
 
   const handleSignup = () => {
     if (!email || !password) {
-      alert("Please fill in all fields");
+      setShowLoginModal(true);
+
       return;
     }
 
-    // Use Firebase auth to create a new user
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
         console.log("User signed up with ", user.email);
-        // You can redirect to another page or perform other actions after signup
       })
       .catch((error) => {
         console.error("Error signing up:", error);
@@ -57,6 +57,11 @@ const Signup = () => {
           </Link>
         </p>
       </div>
+      <CustomModal
+        isOpen={showLoginModal}
+        onRequestClose={() => setShowLoginModal(false)}
+        message="Please Fill in all Fields"
+      />
     </div>
   );
 };

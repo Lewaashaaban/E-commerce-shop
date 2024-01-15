@@ -3,9 +3,36 @@ import "./ProductDisplay.css";
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
 import { ShopContext } from "../../Context/ShopContext";
+import { Navigate, Navigator, useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
+import CustomModal from "../Alert/Custommodal";
+
 const ProductDisplay = (props) => {
+  const navigate = useNavigate();
   const { product } = props;
   const { addToCart } = useContext(ShopContext);
+  const { user, logoutUser, loginUser } = useContext(ShopContext);
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
+
+  const handleAddToCart = () => {
+    auth.onAuthStateChanged(function (user) {
+      if (user) {
+        addToCart(product.id);
+        console.log("User is logged in");
+      } else {
+        // alert("Please log in to add items to your cart.");
+        setShowLoginModal(true);
+      }
+    });
+  };
+
+  const handleLogout = () => {
+    // Call the logoutUser function to handle user logout
+    logoutUser();
+    // You can also redirect the user to a specific page after logout
+    navigate("/"); // Redirect to the home page, for example
+  };
+
   return (
     <div className="productdisplay">
       <div className="productdisplay-left">
@@ -50,19 +77,18 @@ const ProductDisplay = (props) => {
             <div>XXL</div>
           </div>
         </div>
-        <button
-          onClick={() => {
-            addToCart(product.id);
-          }}
-        >
-          ADD To CART
-        </button>
+        <button onClick={handleAddToCart}>ADD TO CART</button>
         <p className="productdisplay-right-category">
           <span>Category: </span>Women, T-shirt, Crop Top
         </p>
         <p className="productdisplay-right-category">
           <span>Tags: </span>Modern, Latest
         </p>
+        <CustomModal
+          isOpen={showLoginModal}
+          onRequestClose={() => setShowLoginModal(false)}
+          message="Please log in to add items to your cart."
+        />
       </div>
     </div>
   );
