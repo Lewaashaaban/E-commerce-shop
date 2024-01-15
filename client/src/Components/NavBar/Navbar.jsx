@@ -88,16 +88,30 @@ const Navbar = () => {
   const [menu, setMenu] = useState("shop");
   const { getTotalItems } = useContext(ShopContext);
   const [user, setUser] = useState(null);
+  const [logoutMessage, setLogoutMessage] = useState("");
 
   useEffect(() => {
-    // Set up an observer to check if the user is logged in
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
     });
 
-    // Cleanup the observer when the component unmounts
     return () => unsubscribe();
   }, []);
+
+  const handleLogout = async () => {
+    // Show a confirmation dialog
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+
+    if (confirmLogout) {
+      try {
+        // If the user confirms, proceed with logout
+        await auth.signOut();
+        alert("Logged out successfully");
+      } catch (error) {
+        console.log("Error signing out");
+      }
+    }
+  };
 
   return (
     <div className="navbar">
@@ -157,7 +171,7 @@ const Navbar = () => {
         {user ? (
           // User is logged in, show logout button
           <button
-            onClick={() => auth.signOut()}
+            onClick={handleLogout}
             style={{ backgroundColor: "red", color: "white" }}
           >
             Logout

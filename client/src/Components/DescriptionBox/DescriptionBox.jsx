@@ -5,15 +5,14 @@ const DescriptionBox = () => {
     <div className="descriptionbox">
       <div className="descriptionbox-navigator">
         <div className="descriptionbox-nav-box">Description</div>
-        <div className="descriptionbox-nav-box fade">Reviews (122)</div>
+        {/* <div className="descriptionbox-nav-box fade">Reviews (122)</div> */}
       </div>
       <div className="descriptionbox-description">
         <p>
-          An E-commerce website is an online platform that facilitates the
-          buying and selling of goods or services over the Internet. The term
-          "e-commerce" stands for electronic commerce, and it involves
-          conducting business activities such as purchasing, selling, and
-          exchanging products or services through electronic means.
+          Introducing our Classic Striped Cotton Shirt, a timeless wardrobe
+          essential that seamlessly blends style and comfort. Crafted with care
+          from high-quality cotton fabric, this shirt promises a soft,
+          breathable feel for all-day wear.
         </p>
         <p></p>
       </div>
