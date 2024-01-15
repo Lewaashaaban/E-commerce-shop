@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import "./CSS/Login.css";
 import { auth } from "../firebase";
+// import { useCookies } from "react-cookie";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // const [cookies, setCookies] = useCookies(["access_token"]);
 
   const handleLogin = () => {
+    
     if (!email || !password) {
       alert("Please fill in all fields");
       return;
@@ -16,7 +19,9 @@ const Login = () => {
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
+
         console.log("Logged in with ", user.email);
+        
       })
       .catch((error) => {
         console.error("Error signing in:", error);
