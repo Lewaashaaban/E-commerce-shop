@@ -7,7 +7,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showLoginModal, setShowLoginModal] = React.useState(false);
-
+  const [errormsg, setErrorMessage] = React.useState(false);
+  var err = "";
   const handleSignup = () => {
     if (!email || !password) {
       setShowLoginModal(true);
@@ -23,7 +24,9 @@ const Signup = () => {
       })
       .catch((error) => {
         console.error("Error signing up:", error);
-        alert(error.message);
+        // alert(error.message);
+        err = error.message;
+        setErrorMessage(true);
       });
   };
 
@@ -61,6 +64,11 @@ const Signup = () => {
         isOpen={showLoginModal}
         onRequestClose={() => setShowLoginModal(false)}
         message="Please Fill in all Fields"
+      />
+      <CustomModal
+        isOpen={errormsg}
+        onRequestClose={() => setErrorMessage(false)}
+        message={err}
       />
     </div>
   );
