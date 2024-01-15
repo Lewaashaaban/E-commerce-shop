@@ -3,9 +3,11 @@ import "./CartItems.css";
 import { ShopContext } from "../../Context/ShopContext";
 import remove_icon from "../Assets/cart_cross_icon.png";
 
-const CartItes = () => {
+const CartItems = () => {
   const { getTotalCartAmount, all_product, cartItems, removeFromCart } =
     useContext(ShopContext);
+  console.log(cartItems); // Log the cartItems state
+
   return (
     <div className="cartitems">
       <div className="cartitems-format-main">
@@ -13,38 +15,86 @@ const CartItes = () => {
         <p>Title</p>
         <p>Price</p>
         <p>Quantity</p>
+        <p>Size</p>
         <p>Total</p>
         <p>Remove </p>
       </div>
+      <hr />{" "}
+      {Object.keys(cartItems).map((cartItemKey) => {
+        const cartItem = cartItems[cartItemKey];
+        const quantity = cartItem?.quantity || 0;
+        const [productId, selectedSize] = cartItemKey.split("_");
 
-      <hr />
-      {all_product.map((e) => {
-        if (cartItems[e.id] > 0) {
-          return (
-            <div>
-              <div className="cartitems-format cartitems-format-main">
-                <img src={e.image} alt="" className="carticon-product-icon" />
-                <p>{e.name}</p>
-                <p>${e.new_price}</p>
-                <button className="cartitems-quantity">
-                  {cartItems[e.id]}
-                </button>
-                <p>${e.new_price * cartItems[e.id]}</p>
-                <img
-                  className="cartitems-remove-icon"
-                  src={remove_icon}
-                  onClick={() => {
-                    removeFromCart(e.id);
-                  }}
-                  alt=""
-                />
+        if (quantity > 0) {
+          const product = all_product.find((p) => String(p.id) === productId);
+          if (product) {
+            return (
+              <div key={cartItemKey}>
+                <div className="cartitems-format cartitems-format-main">
+                  <img
+                    src={product.image}
+                    alt=""
+                    className="carticon-product-icon"
+                  />
+                  <p>{product.name}</p>
+                  <p>${product.new_price}</p>
+                  <button className="cartitems-quantity">{quantity}</button>
+                  <p>{selectedSize}</p>
+                  <p>${product.new_price * quantity}</p>
+                  <img
+                    className="cartitems-remove-icon"
+                    src={remove_icon}
+                    onClick={() => {
+                      removeFromCart(cartItemKey);
+                    }}
+                    alt=""
+                  />
+                </div>
+                <hr />
               </div>
-              <hr />
-            </div>
-          );
+            );
+          }
         }
         return null;
       })}
+      {/* {Object.keys(cartItems).map((productId) => {
+        const quantity = cartItems[productId]?.quantity || 0;
+        if (quantity > 0) {
+          const product = all_product.find(
+            (p) => String(p.id) === String(productId)
+          );
+          if (product) {
+            return (
+              <div key={productId}>
+                <div className="cartitems-format cartitems-format-main">
+                  <img
+                    src={product.image}
+                    alt=""
+                    className="carticon-product-icon"
+                  />
+                  <p>{product.name}</p>
+                  <p>${product.new_price}</p>
+                  <button className="cartitems-quantity">{quantity}</button>
+                  <p>{cartItems[productId]?.size || "N/A"}</p>
+                  <p>${product.new_price * quantity}</p>
+
+                  <img
+                    className="cartitems-remove-icon"
+                    src={remove_icon}
+                    onClick={() => {
+                      removeFromCart(productId);
+                    }}
+                    alt=""
+                  />
+                </div>
+                <hr />
+              </div>
+            );
+          }
+        }
+        return null;
+      })} */}
+    
       <div className="cartitems-down">
         <div className="cartitems-total">
           <h1>cart Totals</h1>
@@ -78,4 +128,4 @@ const CartItes = () => {
   );
 };
 
-export default CartItes;
+export default CartItems;
