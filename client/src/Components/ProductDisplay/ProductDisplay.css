@@ -79,11 +79,43 @@
   border: none;
   outline: none;
   cursor: pointer;
+  transition: background 0.3s;
 }
-.productdisplay-right-category{
-    margin-top: 10px;
+.productdisplay-right-category {
+  margin-top: 10px;
 }
-.productdisplay-right-category span{
-    font-weight: 600;
-    
+.productdisplay-right-category span {
+  font-weight: 600;
+}
+.productdisplay-right-sizes div.initial {
+  border-color: red; /* Set the initial border color here */
+}
+
+.productdisplay-right-sizes {
+  display: flex;
+  margin: 30px 0px;
+  gap: 20px;
+}
+
+.productdisplay-right-sizes div {
+  padding: 18px 24px;
+  background: #fbfbfb;
+  border: 1px solid #ebebeb;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.productdisplay-right-sizes div.selected {
+  border-color: red;
+}
+
+.productdisplay-right-sizes div.initial {
+  border-color: red; /* Set the initial border color here */
+}
+.productdisplay-right button:hover {
+  background: #e03838; /* Change the color on hover */
+}
+
+.productdisplay-right button:active {
+  background: #c72727; /* Change the color when pressed */
 }
