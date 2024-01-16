@@ -2,10 +2,19 @@ import React, { useContext } from "react";
 import "./CartItems.css";
 import { ShopContext } from "../../Context/ShopContext";
 import remove_icon from "../Assets/cart_cross_icon.png";
+import { Link } from "react-router-dom";
 
-const CartItes = () => {
+const CartItems = () => {
   const { getTotalCartAmount, all_product, cartItems, removeFromCart } =
     useContext(ShopContext);
+  console.log(cartItems); // Log the cartItems state
+  const getTotalCartQuantity = () => {
+    let totalQuantity = 0;
+    Object.values(cartItems).forEach((item) => {
+      totalQuantity += item.quantity || 0;
+    });
+    return totalQuantity;
+  };
   return (
     <div className="cartitems">
       <div className="cartitems-format-main">
@@ -13,35 +22,45 @@ const CartItes = () => {
         <p>Title</p>
         <p>Price</p>
         <p>Quantity</p>
+        <p>Size</p>
         <p>Total</p>
         <p>Remove </p>
       </div>
-      0
-      <hr />
-      {all_product.map((e) => {
-        if (cartItems[e.id] > 0) {
-          return (
-            <div>
-              <div className="cartitems-format cartitems-format-main">
-                <img src={e.image} alt="" className="carticon-product-icon" />
-                <p>{e.name}</p>
-                <p>${e.new_price}</p>
-                <button className="cartitems-quantity">
-                  {cartItems[e.id]}
-                </button>
-                <p>${e.new_price * cartItems[e.id]}</p>
-                <img
-                  className="cartitems-remove-icon"
-                  src={remove_icon}
-                  onClick={() => {
-                    removeFromCart(e.id);
-                  }}
-                  alt=""
-                />
+      <hr />{" "}
+      {Object.keys(cartItems).map((cartItemKey) => {
+        const cartItem = cartItems[cartItemKey];
+        const quantity = cartItem?.quantity || 0;
+        const [productId, selectedSize] = cartItemKey.split("_");
+
+        if (quantity > 0) {
+          const product = all_product.find((p) => String(p.id) === productId);
+          if (product) {
+            return (
+              <div key={cartItemKey}>
+                <div className="cartitems-format cartitems-format-main">
+                  <img
+                    src={product.image}
+                    alt=""
+                    className="carticon-product-icon"
+                  />
+                  <p>{product.name}</p>
+                  <p>${product.new_price}</p>
+                  <button className="cartitems-quantityy">{quantity}</button>
+                  <p>{selectedSize}</p>
+                  <p>${product.new_price * quantity}</p>
+                  <img
+                    className="cartitems-remove-icon"
+                    src={remove_icon}
+                    onClick={() => {
+                      removeFromCart(cartItemKey);
+                    }}
+                    alt=""
+                  />
+                </div>
+                <hr />
               </div>
-              <hr />
-            </div>
-          );
+            );
+          }
         }
         return null;
       })}
@@ -64,7 +83,18 @@ const CartItes = () => {
               <h3>${getTotalCartAmount()}</h3>
             </div>
           </div>
-          <button>Proceed To Checkout</button>
+          <Link
+            to={{
+              pathname: "/checkout",
+              state: {
+                cartItems: cartItems,
+                totalQuantity: getTotalCartQuantity(),
+                totalAmount: getTotalCartAmount(),
+              },
+            }}
+          >
+            <button>Proceed To Checkout</button>
+          </Link>
         </div>
         <div className="cartitems-promocode">
           <p>If you have a promo code, enter it here</p>
@@ -78,4 +108,4 @@ const CartItes = () => {
   );
 };
 
-export default CartItes;
+export default CartItems;

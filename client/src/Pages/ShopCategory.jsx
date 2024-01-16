@@ -4,8 +4,13 @@ import { ShopContext } from "../Context/ShopContext";
 import dropdown_icon from "../Components/Assets/dropdown_icon.png";
 import all_product from "../Components/Assets/all_product";
 import Item from "../Components/Items/Item";
+import CustomModal from "../Components/Alert/Custommodal";
 const ShopCategory = (props) => {
   const { all_products } = useContext(ShopContext);
+  const [exploremore, setExploreMore] = React.useState(false);
+  const handleExploreMoreClick = () => {
+    setExploreMore(true);
+  };
   return (
     <div className="shop-category">
       <img className="shopcategory-banner" src={props.banner} alt="" />
@@ -13,9 +18,9 @@ const ShopCategory = (props) => {
         <p>
           <span>Showing 1-12</span> out of 36 products
         </p>
-        <div className="shopcategory-sort">
+        {/* <div className="shopcategory-sort">
           Sort by <img src={dropdown_icon} alt="" />
-        </div>
+        </div> */}
       </div>
       <div className="shopcategory-products">
         {all_product.map((item, i) => {
@@ -35,9 +40,14 @@ const ShopCategory = (props) => {
           }
         })}
       </div>
-      <div className="shopcategory-loadmore">
+      <div className="shopcategory-loadmore" onClick={handleExploreMoreClick}>
         Explore More
       </div>
+      <CustomModal
+        isOpen={exploremore}
+        onRequestClose={() => setExploreMore(false)}
+        message="No more Products to view"
+      />
     </div>
   );
 };

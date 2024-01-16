@@ -1,11 +1,40 @@
-import React, { useContext } from "react";
+// export default ProductDisplay;
+import React, { useContext, useState } from "react";
 import "./ProductDisplay.css";
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
 import { ShopContext } from "../../Context/ShopContext";
+import { auth } from "../../firebase";
+import { useNavigate } from "react-router-dom"; // Fix import statement
+import CustomModal from "../Alert/Custommodal";
+
 const ProductDisplay = (props) => {
+  const navigate = useNavigate();
   const { product } = props;
-  const { addToCart } = useContext(ShopContext);
+  const { addToCart, user, logoutUser } = useContext(ShopContext);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(product.selectedSize || "");
+
+  const handleAddToCart = () => {
+    auth.onAuthStateChanged(function (user) {
+      if (user) {
+        addToCart(product, selectedSize);
+        // addToCart(product.id);
+        console.log("Added to cart with size:", selectedSize);
+      } else {
+        setShowLoginModal(true);
+      }
+    });
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+
+    navigate("/"); // Redirect to the home page, for example
+  };
+  const handleSizeClick = (size) => {
+    setSelectedSize(size);
+  };
   return (
     <div className="productdisplay">
       <div className="productdisplay-left">
@@ -13,7 +42,7 @@ const ProductDisplay = (props) => {
           <img src={product.image} alt="" />
           <img src={product.image} alt="" />
           <img src={product.image} alt="" />
-          <img src={product.image} alt="" />
+          <img src={product.image} alt="" />{" "}
         </div>
         <div className="productdisplay-img">
           <img className="productdisplay-main-img" src={product.image} alt="" />
@@ -43,26 +72,31 @@ const ProductDisplay = (props) => {
         <div className="productdisplay-right-size">
           <h1>Select Size</h1>
           <div className="productdisplay-right-sizes">
-            <div>S</div>
-            <div>M</div>
-            <div>L</div>
-            <div>XL</div>
-            <div>XXL</div>
+            {["S", "M", "L", "XL", "XXL"].map((size) => (
+              <div
+                key={size}
+                onClick={() => handleSizeClick(size)}
+                className={`${selectedSize === size ? "selected" : ""} ${
+                  !selectedSize && size === "M" ? "initial" : ""
+                }`}
+              >
+                {size}
+              </div>
+            ))}
           </div>
         </div>
-        <button
-          onClick={() => {
-            addToCart(product.id);
-          }}
-        >
-          ADD To CART
-        </button>
+        <button onClick={handleAddToCart}>ADD TO CART</button>
         <p className="productdisplay-right-category">
           <span>Category: </span>Women, T-shirt, Crop Top
         </p>
         <p className="productdisplay-right-category">
           <span>Tags: </span>Modern, Latest
         </p>
+        <CustomModal
+          isOpen={showLoginModal}
+          onRequestClose={() => setShowLoginModal(false)}
+          message="Please log in to add items to your cart."
+        />
       </div>
     </div>
   );

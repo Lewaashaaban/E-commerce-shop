@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Link, } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./CSS/Login.css";
 import { auth } from "../firebase";
-// import { useCookies } from "react-cookie";
-
+import CustomModal from "../Components/Alert/Custommodal";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [cookies, setCookies] = useCookies(["access_token"]);
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const navigate = useNavigate(); // Initialize useHistory hook
 
   const handleLogin = () => {
-    
     if (!email || !password) {
-      alert("Please fill in all fields");
+      setShowLoginModal(true);
       return;
     }
     auth
@@ -21,7 +21,8 @@ const Login = () => {
         const user = userCredentials.user;
 
         console.log("Logged in with ", user.email);
-        
+        setShowSuccessModal(true);
+        navigate("/");
       })
       .catch((error) => {
         console.error("Error signing in:", error);
@@ -30,17 +31,13 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // Set up an observer to check if the user is logged in
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("User state changed:", user);
 
       if (user) {
-        // User is logged in, you can set an alert or perform other actions
-        alert("User is logged in!");
+        setShowSuccessModal(true);
       }
     });
 
-    // Cleanup the observer when the component unmounts
     return () => unsubscribe();
   }, []);
 
@@ -71,6 +68,16 @@ const Login = () => {
           </Link>
         </p>
       </div>
+      <CustomModal
+        isOpen={showLoginModal}
+        onRequestClose={() => setShowLoginModal(false)}
+        message="Please Fill in all Fields"
+      />
+      <CustomModal
+        isOpen={showSuccessModal}
+        onRequestClose={() => setShowSuccessModal(false)}
+        message="User is logged in!"
+      />
     </div>
   );
 };
